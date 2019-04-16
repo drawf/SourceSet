@@ -47,6 +47,7 @@ class TextClockView @JvmOverloads constructor(
         doInvalidate()
     }
 
+    //在onLayout方法中计算View去除padding后的宽高
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
         mWidth = (measuredWidth - paddingLeft - paddingRight).toFloat()
@@ -96,21 +97,52 @@ class TextClockView @JvmOverloads constructor(
         }
     }
 
+    //在onDraw方法将画布原点平移到中心位置
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         if (canvas == null) return
-        canvas.drawColor(Color.BLACK)
+        canvas.drawColor(Color.BLACK)//填充背景
         canvas.save()
-        canvas.translate(mWidth / 2, mHeight / 2)
+        canvas.translate(mWidth / 2, mHeight / 2)//原点移动到中心
 
+        //绘制各元件
+        drawCenterInfo(canvas)
         drawHour(canvas, mHourDeg)
         drawMinute(canvas, mMinuteDeg)
         drawSecond(canvas, mSecondDeg)
 
         //辅助线
-        //canvas.drawLine(0f, 0f, mHourR + 500, 0f, mHelperPaint)
+        //canvas.drawLine(0f, 0f, mWidth, 0f, mHelperPaint)
 
         canvas.restore()
+    }
+
+    /**
+     * 绘制圆中信息
+     */
+    private fun drawCenterInfo(canvas: Canvas) {
+        Calendar.getInstance().run {
+            //绘制数字时间
+            val hour = get(Calendar.HOUR_OF_DAY)
+            val minute = get(Calendar.MINUTE)
+
+            mPaint.textSize = mHourR * 0.4f
+            mPaint.alpha = 255
+            mPaint.textAlign = Paint.Align.CENTER
+            canvas.drawText("$hour:$minute", 0f, mPaint.getBottomedY(), mPaint)
+
+            //绘制月份、星期
+            val month = (this.get(Calendar.MONTH) + 1).let {
+                if (it < 10) "0$it" else "$it"
+            }
+            val day = this.get(Calendar.DAY_OF_MONTH)
+            val dayOfWeek = (get(Calendar.DAY_OF_WEEK) - 1).toText()
+
+            mPaint.textSize = mHourR * 0.16f
+            mPaint.alpha = 255
+            mPaint.textAlign = Paint.Align.CENTER
+            canvas.drawText("$month.$day 星期$dayOfWeek", 0f, mPaint.getToppedY(), mPaint)
+        }
     }
 
     /**
@@ -126,6 +158,7 @@ class TextClockView @JvmOverloads constructor(
         for (i in 0 until 12) {
             canvas.save()
 
+            //从x轴开始旋转，每30°绘制一下「几点」，12次就画完了「时圈」
             val iDeg = 360 / 12f * i
             canvas.rotate(iDeg)
 
@@ -231,10 +264,24 @@ class TextClockView @JvmOverloads constructor(
     }
 
     /**
-     * 扩展获取绘制文字时垂直居中y坐标
+     * 扩展获取绘制文字时在x轴上 垂直居中的y坐标
      */
     private fun Paint.getCenteredY(): Float {
         return this.fontSpacing / 2 - this.fontMetrics.bottom
+    }
+
+    /**
+     * 扩展获取绘制文字时在x轴上 贴紧x轴的上边缘的y坐标
+     */
+    private fun Paint.getBottomedY(): Float {
+        return -this.fontMetrics.bottom
+    }
+
+    /**
+     * 扩展获取绘制文字时在x轴上 贴近x轴的下边缘的y坐标
+     */
+    private fun Paint.getToppedY(): Float {
+        return -this.fontMetrics.ascent
     }
 
     private fun dp2px(dpValue: Float): Float {
@@ -243,8 +290,8 @@ class TextClockView @JvmOverloads constructor(
     }
 
     companion object {
-        val NUMBER_TEXT_LIST = listOf(
-            "零",
+        private val NUMBER_TEXT_LIST = listOf(
+            "日",
             "一",
             "二",
             "三",
