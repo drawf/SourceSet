@@ -40,10 +40,10 @@ class TextClockView @JvmOverloads constructor(
     private var mAnimator: ValueAnimator by Delegates.notNull()
 
     init {
-        //处理动画
-        mAnimator = ValueAnimator.ofFloat(6f, 0f)
+        //处理动画，声明全局的处理器
+        mAnimator = ValueAnimator.ofFloat(6f, 0f)//由6降到1
         mAnimator.duration = 150
-        mAnimator.interpolator = LinearInterpolator()
+        mAnimator.interpolator = LinearInterpolator()//插值器设为线性
         doInvalidate()
     }
 
@@ -59,7 +59,7 @@ class TextClockView @JvmOverloads constructor(
     }
 
     /**
-     * 开始计时
+     * 开始绘制
      */
     fun doInvalidate() {
         Calendar.getInstance().run {
@@ -71,25 +71,25 @@ class TextClockView @JvmOverloads constructor(
             mMinuteDeg = -360 / 60f * (minute - 1)
             mSecondDeg = -360 / 60f * (second - 1)
 
-            //记录当前角度，用于计算动画
+            //记录当前角度，然后让秒圈线性的旋转6°
             val hd = mHourDeg
             val md = mMinuteDeg
             val sd = mSecondDeg
 
             //处理动画
-            mAnimator.removeAllUpdateListeners()
+            mAnimator.removeAllUpdateListeners()//需要移除先前的监听
             mAnimator.addUpdateListener {
                 val av = (it.animatedValue as Float)
 
                 if (minute == 0 && second == 0) {
-                    mHourDeg = hd + av * 5
+                    mHourDeg = hd + av * 5//时圈旋转角度是分秒的5倍，线性的旋转30°
                 }
 
                 if (second == 0) {
-                    mMinuteDeg = md + av
+                    mMinuteDeg = md + av//线性的旋转6°
                 }
 
-                mSecondDeg = sd + av
+                mSecondDeg = sd + av//线性的旋转6°
 
                 invalidate()
             }
