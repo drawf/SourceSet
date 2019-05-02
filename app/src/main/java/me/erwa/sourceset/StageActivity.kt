@@ -19,9 +19,15 @@ import kotlin.concurrent.timer
 class StageActivity : AppCompatActivity() {
 
     private lateinit var mArgParams: ActivityParams
+    private lateinit var mTypeMap: MutableMap<String, () -> Unit>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        mTypeMap = mutableMapOf(
+            TYPE_TEXT_CLOCK to { caseTextClock() },
+            TYPE_SHADOW_LAYOUT to { caseShadowLayout() }
+        )
 
         //处理参数数据
         mArgParams = if (savedInstanceState != null) {
@@ -30,13 +36,14 @@ class StageActivity : AppCompatActivity() {
             intent.getSerializableExtra(ARG_PARAMS) as ActivityParams
         }
 
-        when (mArgParams.showType) {
-            TYPE_TEXT_CLOCK -> caseTextClock()
-        }
-
+        mTypeMap[mArgParams.showType]?.invoke()
     }
 
+    //********************************
+    //* 文字时钟
+    //********************************
     private var mTimer: Timer? = null
+
     private fun caseTextClock() {
         setContentView(R.layout.activity_stage_text_clock)
 
@@ -46,6 +53,13 @@ class StageActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    //********************************
+    //* 阴影布局
+    //********************************
+    private fun caseShadowLayout() {
+        setContentView(R.layout.activity_stage_shadow_layout)
     }
 
     override fun onDestroy() {
@@ -65,7 +79,9 @@ class StageActivity : AppCompatActivity() {
 
     companion object {
         private const val ARG_PARAMS = "ARG_PARAMS"
+
         const val TYPE_TEXT_CLOCK = "TYPE_TEXT_CLOCK"
+        const val TYPE_SHADOW_LAYOUT = "TYPE_SHADOW_LAYOUT"
 
         @JvmStatic
         fun navigate(context: Context, params: ActivityParams) {

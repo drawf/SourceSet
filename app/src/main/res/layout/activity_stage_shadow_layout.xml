@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF6F7F9"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#FFFFFF"
+        android:gravity="center">
+
+        <me.erwa.sourceset.view.layout.ShadowLayout
+            android:layout_width="359dp"
+            android:layout_height="104dp"
+            app:sl_borderColor="#CCEDEFF3"
+            app:sl_borderWidth="1dp"
+            app:sl_cornerRadius="4dp"
+            app:sl_dy="4dp"
+            app:sl_shadowColor="#143A4E73"
+            app:sl_shadowRadius="12dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#FFFFFF"
+                android:gravity="center"
+                android:text="ShadowLayout"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </me.erwa.sourceset.view.layout.ShadowLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#FFFFFF"
+        android:gravity="center">
+
+        <me.erwa.sourceset.view.layout.ShadowLayout
+            android:layout_width="383dp"
+            android:layout_height="96dp"
+            app:sl_cornerRadius="20dp"
+            app:sl_dy="4dp"
+            app:sl_shadowColor="#3D25B3FF"
+            app:sl_shadowRadius="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#FF1EB4FF"
+                android:gravity="center"
+                android:textColor="#FFFFFF"
+                android:text="ShadowLayout"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </me.erwa.sourceset.view.layout.ShadowLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#FFF6F7F9">
+
+        <me.erwa.sourceset.view.layout.ShadowLayout
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:layout_gravity="bottom"
+            app:sl_borderWidth="0dp"
+            app:sl_cornerRadius="0dp"
+            app:sl_dy="-4dp"
+            app:sl_shadowColor="#143A4E73"
+            app:sl_shadowRadius="12dp"
+            app:sl_shadowSides="TOP">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="#FFFFFF"
+                    android:gravity="center"
+                    android:text="ShadowLayout"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="128dp"
+                    android:layout_height="match_parent"
+                    android:background="#FFFFD72D"
+                    android:gravity="center"
+                    android:text="开始扫雷"
+                    android:textColor="#FFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </me.erwa.sourceset.view.layout.ShadowLayout>
+    </LinearLayout>
+
+</LinearLayout>

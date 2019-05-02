@@ -22,6 +22,13 @@ class MainActivity : AppCompatActivity() {
                 StageActivity.ActivityParams(StageActivity.TYPE_TEXT_CLOCK)
             )
         }
+
+        main_action_shadowLayout.setOnClickListener {
+            StageActivity.navigate(
+                this,
+                StageActivity.ActivityParams(StageActivity.TYPE_SHADOW_LAYOUT)
+            )
+        }
     }
 
 }
