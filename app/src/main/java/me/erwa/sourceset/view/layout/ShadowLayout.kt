@@ -35,11 +35,11 @@ class ShadowLayout @JvmOverloads constructor(
      */
     private var mShadowRadius: Float = 0f
     /**
-     * x轴发散距离
+     * x轴偏移距离
      */
     private var mDx: Float = 0f
     /**
-     * y轴发散距离
+     * y轴偏移距离
      */
     private var mDy: Float = 0f
     /**
@@ -149,7 +149,7 @@ class ShadowLayout @JvmOverloads constructor(
         //先绘制子控件
         block.invoke(canvas)
 
-        //使用path绘制圆角矩形
+        //使用path构建四个圆角
         val path = Path().apply {
             addRect(
                 mContentRF,
@@ -173,6 +173,7 @@ class ShadowLayout @JvmOverloads constructor(
     }
 
     private fun drawBorder(canvas: Canvas) {
+        //以边框宽度的三分之一，微调边框绘制位置，以在边框较宽时得到更好的视觉效果
         val bw = mBorderWidth / 3
         if (bw > 0) {
             canvas.save()
