@@ -3,12 +3,12 @@
 package me.erwa.sourceset.view
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
 import android.support.annotation.ColorInt
 import android.view.View
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * @author: drawf
@@ -45,6 +45,27 @@ fun Paint.utilReset(colorString: String? = null, @ColorInt color: Int? = null) {
 }
 
 /**
+ * 扩展获取绘制文字时在x轴上 垂直居中的y坐标
+ */
+fun Paint.getCenteredY(): Float {
+    return this.fontSpacing / 2 - this.fontMetrics.bottom
+}
+
+/**
+ * 扩展获取绘制文字时在x轴上 贴紧x轴的上边缘的y坐标
+ */
+fun Paint.getBottomedY(): Float {
+    return -this.fontMetrics.bottom
+}
+
+/**
+ * 扩展获取绘制文字时在x轴上 贴近x轴的下边缘的y坐标
+ */
+fun Paint.getToppedY(): Float {
+    return -this.fontMetrics.ascent
+}
+
+/**
  * dp转px
  */
 fun Context.dpf2pxf(dpValue: Float): Float {
@@ -78,29 +99,6 @@ fun Canvas.helpGreenCurtain(debug: Boolean) {
     }
 }
 
-/**
- * 辅助红色画笔
- */
-fun Paint.helpRedColor(debug: Boolean) {
-    helpColor(debug, Color.RED)
-}
-
-/**
- * 辅助蓝色画笔
- */
-fun Paint.helpBlueColor(debug: Boolean) {
-    helpColor(debug, Color.BLUE)
-}
-
-/**
- * 辅助画笔颜色
- */
-fun Paint.helpColor(debug: Boolean, @ColorInt color: Int) {
-    if (debug) {
-        this.color = color
-    }
-}
-
 //********************************
 //* 属性计算工具
 //********************************
@@ -124,4 +122,33 @@ fun Int.addFlag(flag: Int): Int {
  */
 fun Int.removeFlag(flag: Int): Int {
     return this and (flag.inv())
+}
+
+/**
+ * 角度制转弧度制
+ */
+private fun Float.degree2radian(): Float {
+    return (this / 180f * PI).toFloat()
+}
+
+/**
+ * 计算某角度的sin值
+ */
+fun Float.degreeSin(): Float {
+    return sin(this.degree2radian())
+}
+
+/**
+ * 计算某角度的cos值
+ */
+fun Float.degreeCos(): Float {
+    return cos(this.degree2radian())
+}
+
+/**
+ * 计算一个点坐标，绕原点旋转一定角度后的坐标
+ */
+fun PointF.degreePointF(outPointF: PointF, degree: Float) {
+    outPointF.x = this.x * degree.degreeCos() - this.y * degree.degreeSin()
+    outPointF.y = this.x * degree.degreeSin() + this.y * degree.degreeCos()
 }

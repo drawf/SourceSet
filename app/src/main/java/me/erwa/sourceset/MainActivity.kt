@@ -29,6 +29,13 @@ class MainActivity : AppCompatActivity() {
                 StageActivity.ActivityParams(StageActivity.TYPE_SHADOW_LAYOUT)
             )
         }
+
+        main_action_radarView.setOnClickListener {
+            StageActivity.navigate(
+                this,
+                StageActivity.ActivityParams(StageActivity.TYPE_RADAR_VIEW)
+            )
+        }
     }
 
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <me.erwa.sourceset.view.RadarView
+        android:id="@+id/stage_radarView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:rv_animateMode="SPEED"
+        app:rv_animateTime="1000"
+        app:rv_areaBorderColor="#FF415AFF"
+        app:rv_areaColor="#CC6478FF"
+        app:rv_textArrayedColor="#FF8995AB"
+        app:rv_textCenteredColor="#FFFFFF"
+        app:rv_textCenteredName="能力值"
+        app:rv_webLineColor="#FFD8DCE3"
+        app:rv_webRadius="100dp" />
+
+</LinearLayout>

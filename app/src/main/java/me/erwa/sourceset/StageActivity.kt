@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_stage_radar_view.*
 import kotlinx.android.synthetic.main.activity_stage_text_clock.*
 import java.io.Serializable
 import java.util.*
@@ -26,7 +27,8 @@ class StageActivity : AppCompatActivity() {
 
         mTypeMap = mutableMapOf(
             TYPE_TEXT_CLOCK to { caseTextClock() },
-            TYPE_SHADOW_LAYOUT to { caseShadowLayout() }
+            TYPE_SHADOW_LAYOUT to { caseShadowLayout() },
+            TYPE_RADAR_VIEW to { caseRadarView() }
         )
 
         //处理参数数据
@@ -62,6 +64,30 @@ class StageActivity : AppCompatActivity() {
         setContentView(R.layout.activity_stage_shadow_layout)
     }
 
+    //********************************
+    //* 雷达图
+    //********************************
+    private fun caseRadarView() {
+        setContentView(R.layout.activity_stage_radar_view)
+        val textList = listOf(
+            "数学抽象",
+            "逻辑推理",
+            "数据分析",
+            "数学建模",
+            "直观想象",
+            "数学运算"
+        )
+        val progressList = listOf(100, 20, 30, 40, 50, 60)
+
+        stage_radarView.setTextArray(textList)
+        stage_radarView.setProgressList(progressList)
+        stage_radarView.doInvalidate()
+
+        stage_radarView.setOnClickListener {
+            stage_radarView.doInvalidate()
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         mTimer?.cancel()
@@ -82,6 +108,7 @@ class StageActivity : AppCompatActivity() {
 
         const val TYPE_TEXT_CLOCK = "TYPE_TEXT_CLOCK"
         const val TYPE_SHADOW_LAYOUT = "TYPE_SHADOW_LAYOUT"
+        const val TYPE_RADAR_VIEW = "TYPE_RADAR_VIEW"
 
         @JvmStatic
         fun navigate(context: Context, params: ActivityParams) {

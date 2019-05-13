@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RadarView">
+        <attr name="rv_webRadius" format="dimension"/>
+        <attr name="rv_webMaxProgress" format="integer"/>
+        <attr name="rv_webLineColor" format="color"/>
+        <attr name="rv_webLineWidth" format="dimension"/>
+
+        <attr name="rv_textArrayedColor" format="color"/>
+        <attr name="rv_textArrayedFontPath" format="string"/>
+
+        <attr name="rv_areaColor" format="color"/>
+        <attr name="rv_areaBorderColor" format="color"/>
+
+        <attr name="rv_textCenteredName" format="string"/>
+        <attr name="rv_textCenteredColor" format="color"/>
+        <attr name="rv_textCenteredFontPath" format="string"/>
+
+        <attr name="rv_animateTime" format="integer"/>
+        <attr name="rv_animateMode" format="enum">
+            <enum name="TIME" value="101"/>
+            <enum name="SPEED" value="102"/>
+        </attr>
+    </declare-styleable>
+</resources>

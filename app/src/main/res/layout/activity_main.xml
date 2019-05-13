@@ -22,4 +22,10 @@
         android:layout_height="wrap_content"
         android:text="阴影布局" />
 
+    <Button
+        android:id="@+id/main_action_radarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="雷达图" />
+
 </LinearLayout>
