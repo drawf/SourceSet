@@ -1,5 +1,6 @@
 package me.erwa.sourceset.view
 
+import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
@@ -226,6 +227,9 @@ class RadarView @JvmOverloads constructor(
         initView()
     }
 
+    /**
+     * 设置执行动画前的进度
+     */
     fun setOldProgressList(oldProgressList: List<Int>) {
         this.mOldProgressArray = oldProgressList.toTypedArray()
         initView()
@@ -356,10 +360,20 @@ class RadarView @JvmOverloads constructor(
     }
 
     /**
-     * 开始动画
+     * 各属性动画一起执行
      */
     fun doInvalidate() {
-        mAnimatorArray.forEachIndexed { index, valueAnimator ->
+        mAnimatorArray.forEachIndexed { index, _ ->
+            doInvalidate(index)
+        }
+    }
+
+    /**
+     * 指定某属性开始动画
+     */
+    fun doInvalidate(index: Int, block: ((Int) -> Unit)? = null) {
+        if (index >= 0 && index < mAnimatorArray.size) {
+            val valueAnimator = mAnimatorArray[index]
             val at = mAnimatorTimeArray[index]
             if (valueAnimator != null && at > 0) {
                 valueAnimator.duration = at
@@ -370,7 +384,24 @@ class RadarView @JvmOverloads constructor(
 
                     invalidate()
                 }
+                //设置动画结束监听
+                if (block != null) {
+                    valueAnimator.removeAllListeners()
+                    valueAnimator.addListener(object : Animator.AnimatorListener {
+                        override fun onAnimationRepeat(animation: Animator?) {}
+
+                        override fun onAnimationEnd(animation: Animator?) {
+                            block.invoke(index)
+                        }
+
+                        override fun onAnimationCancel(animation: Animator?) {}
+
+                        override fun onAnimationStart(animation: Animator?) {}
+                    })
+                }
                 valueAnimator.start()
+            } else {
+                block?.invoke(index)
             }
         }
     }

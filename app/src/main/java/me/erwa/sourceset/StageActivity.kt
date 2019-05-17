@@ -67,6 +67,10 @@ class StageActivity : AppCompatActivity() {
     //********************************
     //* 雷达图
     //********************************
+    val oldProgressList = listOf(20, 20, 20, 20, 20, 20)
+    //    val progressList = listOf(100, 20, 30, 40, 50, 60)
+    val progressList = mutableListOf(20, 20, 20, 20, 20, 20)
+    val tempProgressList = listOf(100, 20, 30, 40, 50, 60)
     private fun caseRadarView() {
         setContentView(R.layout.activity_stage_radar_view)
         val textList = listOf(
@@ -77,14 +81,34 @@ class StageActivity : AppCompatActivity() {
             "直观想象",
             "数学运算"
         )
-        val progressList = listOf(100, 20, 30, 40, 50, 60)
-
         stage_radarView.setTextArray(textList)
+        //demo：各属性动画一起执行
+//        stage_radarView.setOldProgressList(oldProgressList)
         stage_radarView.setProgressList(progressList)
-        stage_radarView.doInvalidate()
+//        stage_radarView.doInvalidate()
+//        stage_radarView.setOnClickListener {
+//            stage_radarView.doInvalidate()
+//        }
 
+        //demo：各属性动画依次执行
+        doAnimSuccessive(0)
         stage_radarView.setOnClickListener {
-            stage_radarView.doInvalidate()
+            progressList.forEachIndexed { index, _ ->
+                progressList[index] = oldProgressList[index]
+            }
+            doAnimSuccessive(0)
+        }
+    }
+
+    private fun doAnimSuccessive(index: Int) {
+        if (progressList.size == tempProgressList.size && index >= 0 && index < progressList.size) {
+            progressList[index] = tempProgressList[index]
+            stage_radarView.setOldProgressList(oldProgressList)
+            stage_radarView.setProgressList(progressList)
+
+            stage_radarView.doInvalidate(index) {
+                doAnimSuccessive((it + 1))
+            }
         }
     }
 
