@@ -332,25 +332,20 @@ class RadarView @JvmOverloads constructor(
      * 初始化动画处理器
      */
     private fun initAnimator() {
-        try {
-            mAnimatorArray = Array(mTextArray.size) { null }
-            mAnimatorTimeArray = Array(mTextArray.size) { 0L }
-            mAnimatorArray.forEachIndexed { index, _ ->
-                val sv = mOldProgressArray[index].toFloat()
-                val ev = mProgressArray[index].toFloat()
-                mAnimatorArray[index] = if (sv == ev) null else ValueAnimator.ofFloat(sv, ev)
+        mAnimatorArray = Array(mTextArray.size) { null }
+        mAnimatorTimeArray = Array(mTextArray.size) { 0L }
+        mAnimatorArray.forEachIndexed { index, _ ->
+            val sv = mOldProgressArray[index].toFloat()
+            val ev = mProgressArray[index].toFloat()
+            mAnimatorArray[index] = if (sv == ev) null else ValueAnimator.ofFloat(sv, ev)
 
-                if (mAnimateMode == ANIMATE_MODE_TIME) {
-                    mAnimatorTimeArray[index] = mAnimateTime
-                } else {
-                    //根据最大进度和动画时间算出恒定速度
-                    val v = mWebMaxProgress.toFloat() / mAnimateTime
-                    mAnimatorTimeArray[index] = if (sv == ev) 0L else ((ev - sv) / v).toLong()
-                }
-
+            if (mAnimateMode == ANIMATE_MODE_TIME) {
+                mAnimatorTimeArray[index] = mAnimateTime
+            } else {
+                //根据最大进度和动画时间算出恒定速度
+                val v = mWebMaxProgress.toFloat() / mAnimateTime
+                mAnimatorTimeArray[index] = if (sv == ev) 0L else ((ev - sv) / v).toLong()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
@@ -511,7 +506,7 @@ class RadarView @JvmOverloads constructor(
         val rDeg = 360f / mTextArray.size
 
         //先计算出雷达图各个顶点的坐标
-        mPointArray.mapIndexed { index, pointF ->
+        mPointArray.forEachIndexed { index, pointF ->
             if (index == 0) {
                 pointF.x = 0f
                 pointF.y = -mWebRadius
@@ -525,8 +520,6 @@ class RadarView @JvmOverloads constructor(
                 canvas.drawCircle(pointF.x, pointF.y, 5f, mHelperPaint)
                 mHelperPaint.utilReset()
             }
-
-            return@mapIndexed pointF
         }
 
         //基于各顶点坐标，计算出文字坐标并绘制文字
@@ -597,7 +590,7 @@ class RadarView @JvmOverloads constructor(
 
         //根据雷达图第一个坐标最为基坐标进行相应计算，算出各个进度坐标
         val bPoint = mPointArray.first()
-        mProgressPointArray.mapIndexed { index, pointF ->
+        mProgressPointArray.forEachIndexed { index, pointF ->
             val progress = mProgressArray[index] / mWebMaxProgress.toFloat()
             pointF.x = bPoint.x * progress
             pointF.y = bPoint.y * progress
