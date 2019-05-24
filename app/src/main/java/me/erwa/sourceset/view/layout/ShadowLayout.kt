@@ -25,6 +25,10 @@ class ShadowLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
+    //********************************
+    //* 自定义属性部分
+    //********************************
+
     /**
      * 阴影颜色
      */
@@ -60,17 +64,44 @@ class ShadowLayout @JvmOverloads constructor(
      */
     private var mShadowSides: Int = default_shadowSides
 
+    //********************************
+    //* 绘制使用的属性部分
+    //********************************
+
+    /**
+     * 全局画笔
+     */
     private var mPaint: Paint = createPaint(color = Color.WHITE)
     private var mHelpPaint: Paint = createPaint(color = Color.RED)
+
+    /**
+     * 全局Path
+     */
+    private var mPath = Path()
+    /**
+     * 合成模式
+     */
+    private var mXfermode: PorterDuffXfermode by Delegates.notNull()
+    /**
+     * 视图内容区域的RectF实例
+     */
     private var mContentRF: RectF by Delegates.notNull()
+    /**
+     * 视图边框的RectF实例
+     */
+    private var mBorderRF: RectF? = null
 
     init {
         initAttributes(context, attrs)
+        initDrawAttributes()
         processPadding()
         //设置软件渲染类型
         setLayerType(View.LAYER_TYPE_SOFTWARE, null)
     }
 
+    /**
+     * 初始化自定义属性
+     */
     private fun initAttributes(context: Context, attrs: AttributeSet?) {
         val a = context.obtainStyledAttributes(attrs, R.styleable.ShadowLayout)
         try {
@@ -94,6 +125,17 @@ class ShadowLayout @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 初始化绘制相关的属性
+     */
+    private fun initDrawAttributes() {
+        //使用xfermode在图层上进行合成，处理圆角
+        mXfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
+    }
+
+    /**
+     * 处理View的Padding为阴影留出空间
+     */
     private fun processPadding() {
         val xPadding = (mShadowRadius + mDx.absoluteValue).toInt()
         val yPadding = (mShadowRadius + mDy.absoluteValue).toInt()
@@ -114,6 +156,17 @@ class ShadowLayout @JvmOverloads constructor(
             (w - paddingRight).toFloat(),
             (h - paddingBottom).toFloat()
         )
+
+        //以边框宽度的三分之一，微调边框绘制位置，以在边框较宽时得到更好的视觉效果
+        val bw = mBorderWidth / 3
+        if (bw > 0) {
+            mBorderRF = RectF(
+                mContentRF.left + bw,
+                mContentRF.top + bw,
+                mContentRF.right - bw,
+                mContentRF.bottom - bw
+            )
+        }
     }
 
     override fun dispatchDraw(canvas: Canvas?) {
@@ -133,6 +186,9 @@ class ShadowLayout @JvmOverloads constructor(
         drawBorder(canvas)
     }
 
+    /**
+     * 绘制阴影
+     */
     private fun drawShadow(canvas: Canvas) {
         canvas.save()
 
@@ -143,6 +199,9 @@ class ShadowLayout @JvmOverloads constructor(
         canvas.restore()
     }
 
+    /**
+     * 绘制子View
+     */
     private fun drawChild(canvas: Canvas, block: (Canvas) -> Unit) {
         canvas.saveLayer(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(), mPaint, Canvas.ALL_SAVE_FLAG)
 
@@ -150,7 +209,7 @@ class ShadowLayout @JvmOverloads constructor(
         block.invoke(canvas)
 
         //使用path构建四个圆角
-        val path = Path().apply {
+        mPath = mPath.apply {
             addRect(
                 mContentRF,
                 Path.Direction.CW
@@ -165,29 +224,25 @@ class ShadowLayout @JvmOverloads constructor(
         }
 
         //使用xfermode在图层上进行合成，处理圆角
-        mPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
-        canvas.drawPath(path, mPaint)
+        mPaint.xfermode = mXfermode
+        canvas.drawPath(mPath, mPaint)
         mPaint.utilReset()
+        mPath.reset()
 
         canvas.restore()
     }
 
+    /**
+     * 绘制边框
+     */
     private fun drawBorder(canvas: Canvas) {
-        //以边框宽度的三分之一，微调边框绘制位置，以在边框较宽时得到更好的视觉效果
-        val bw = mBorderWidth / 3
-        if (bw > 0) {
+        mBorderRF?.let {
             canvas.save()
 
-            val borderRF = RectF(
-                mContentRF.left + bw,
-                mContentRF.top + bw,
-                mContentRF.right - bw,
-                mContentRF.bottom - bw
-            )
             mPaint.strokeWidth = mBorderWidth
             mPaint.style = Paint.Style.STROKE
             mPaint.color = mBorderColor
-            canvas.drawRoundRect(borderRF, mCornerRadius, mCornerRadius, mPaint)
+            canvas.drawRoundRect(it, mCornerRadius, mCornerRadius, mPaint)
             mPaint.utilReset()
 
             canvas.restore()
