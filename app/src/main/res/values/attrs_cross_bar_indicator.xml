@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CrossBarIndicator">
+        <attr name="cbi_itemWidth" format="dimension" />
+        <attr name="cbi_itemHeight" format="dimension" />
+        <attr name="cbi_itemSpace" format="dimension" />
+        <attr name="cbi_itemBackgroundColor" format="color" />
+        <attr name="cbi_itemForegroundColor" format="color" />
+    </declare-styleable>
+</resources>

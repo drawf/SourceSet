@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <me.erwa.sourceset.view.banner.BannerView
+        android:id="@+id/stage_bannerViewInterval"
+        android:layout_width="match_parent"
+        android:layout_height="128dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:bv_intervalInMillis="3000"
+        app:bv_viewCornerRadius="4dp"
+        app:bv_viewHeight="120dp">
+
+        <me.erwa.sourceset.view.banner.indicator.CrossBarIndicator
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            app:cbi_itemBackgroundColor="#192D3C63"
+            app:cbi_itemForegroundColor="#3A4E73"
+            app:cbi_itemHeight="2dp"
+            app:cbi_itemSpace="4dp"
+            app:cbi_itemWidth="24dp" />
+    </me.erwa.sourceset.view.banner.BannerView>
+
+    <me.erwa.sourceset.view.banner.BannerView
+        android:id="@+id/stage_bannerViewSmooth"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginRight="20dp"
+        app:bv_intervalInMillis="6000"
+        app:bv_itemViewAlign="CENTER_IN_PARENT"
+        app:bv_itemViewMargin="8dp"
+        app:bv_itemViewWidthRatio="0.9"
+        app:bv_pageHoldInMillis="1000"
+        app:bv_scrollMode="SMOOTH">
+
+        <me.erwa.sourceset.view.banner.indicator.CrossBarIndicator
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            app:cbi_itemBackgroundColor="#192D3C63"
+            app:cbi_itemForegroundColor="#3A4E73"
+            app:cbi_itemHeight="2dp"
+            app:cbi_itemSpace="4dp"
+            app:cbi_itemWidth="24dp" />
+    </me.erwa.sourceset.view.banner.BannerView>
+
+    <Button
+        android:id="@+id/stage_clearSmooth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="clear smooth" />
+
+</LinearLayout>

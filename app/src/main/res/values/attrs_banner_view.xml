@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BannerView">
+        <attr name="bv_viewHeight" format="dimension" />
+        <attr name="bv_viewCornerRadius" format="dimension" />
+        <!--使用百分百设置item的宽度-->
+        <attr name="bv_itemViewWidthRatio" format="float" />
+        <attr name="bv_itemViewMargin" format="dimension" />
+        <attr name="bv_intervalInMillis" format="integer" />
+        <!--手指滑动后，页面停留时长，只在SMOOTH模式下生效-->
+        <attr name="bv_pageHoldInMillis" format="integer" />
+        <attr name="bv_scrollMode" format="enum">
+            <enum name="INTERVAL" value="101" />
+            <enum name="SMOOTH" value="102" />
+        </attr>
+        <!--itemView与父wrapper的对齐方式（决定了itemViewMargin的留白位置）-->
+        <attr name="bv_itemViewAlign" format="enum">
+            <enum name="CENTER_HORIZONTAL" value="201" />
+            <enum name="ALIGN_PARENT_LEFT" value="202" />
+            <enum name="ALIGN_PARENT_RIGHT" value="203" />
+        </attr>
+    </declare-styleable>
+</resources>

@@ -28,4 +28,10 @@
         android:layout_height="wrap_content"
         android:text="雷达图" />
 
+    <Button
+        android:id="@+id/main_action_bannerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Banner图" />
+
 </LinearLayout>
