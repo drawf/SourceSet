@@ -12,7 +12,6 @@ import me.erwa.sourceset.view.createPaint
 import me.erwa.sourceset.view.dpf2pxf
 import kotlin.properties.Delegates
 
-
 /**
  * @author: drawf
  * @date: 2019/3/19
@@ -28,7 +27,7 @@ class BannerView @JvmOverloads constructor(
     //********************************
 
     /**
-     * 视图的高度
+     * 视图区域的高度
      * 小于等于0时为 Match Parent
      */
     private var mViewHeight: Float = 0f
@@ -54,19 +53,19 @@ class BannerView @JvmOverloads constructor(
     private var mIntervalInMillis: Int = 0
 
     /**
-     * 页面停留时长，只在SMOOTH模式下生效
+     * 手指滑动后，页面停留时长，只在SMOOTH模式下生效
      */
-    private var mPageHoldInMillis: Int = default_pageHoldInMillis
+    private var mPageHoldInMillis: Int = DEFAULT_PAGE_HOLD_IN_MILLIS
 
     /**
      * 滚动模式
      */
-    private var mScrollMode: Int = default_scrollMode
+    private var mScrollMode: Int = DEFAULT_SCROLL_MODE
 
     /**
      * itemView对齐方式
      */
-    private var mItemViewAlign: Int = default_itemViewAlign
+    private var mItemViewAlign: Int = DEFAULT_ITEM_VIEW_ALIGN
 
     //********************************
     //* 绘制使用的属性部分
@@ -104,6 +103,16 @@ class BannerView @JvmOverloads constructor(
      * 视图区域的坐标
      */
     private var mViewRectF: RectF = RectF()
+
+    /**
+     * 自动滚动标识位
+     */
+    private var mFlagAutoScroll: Boolean = false
+
+    /**
+     * 指示器实例
+     */
+    private var mIndicator: IIndicatorInstance? = null
 
     //********************************
     //* 设置数据属性部分
@@ -148,14 +157,7 @@ class BannerView @JvmOverloads constructor(
      */
     fun doRecreate() {
         initView()
-        processSingleView()
     }
-
-    /**
-     * 自动滚动标识位
-     */
-    private var mFlagAutoScroll: Boolean = false
-    private var mIndicator: IIndicatorInstance? = null
 
     init {
         initAttributes(context, attrs)
@@ -164,42 +166,7 @@ class BannerView @JvmOverloads constructor(
 
     override fun onGlobalLayout() {
         viewTreeObserver.removeOnGlobalLayoutListener(this)
-        processSingleView()
-        processInitView()
-    }
-
-    /**
-     * 处理单张图情况
-     */
-    private fun processSingleView() {
-        if (mBannerViewImpl != null) {
-            val bvImpl = mBannerViewImpl!!
-            val count = bvImpl.getCount()
-            if (count <= 1) {
-                val view = if (count < 1) {
-                    bvImpl.getDefaultView(context)
-                } else {
-                    bvImpl.getItemView(context).apply {
-                        bvImpl.onBindView(this, 0)
-                        bvImpl.onPageSelected(0)
-                    }
-                } ?: View(context).apply { setBackgroundColor(Color.WHITE) }
-
-                val lp = LayoutParams(getItemViewWidth(), mViewHeight.toInt()).apply {
-                    addRule(getItemViewAlign())
-                }
-                addView(view, lp)
-            }
-        }
-    }
-
-    /**
-     * 布局完毕后，初始化view
-     */
-    private fun processInitView() {
-        if (mBannerViewImpl != null && mBannerViewImpl!!.getCount() > 1) {
-            initView()
-        }
+        initView()
     }
 
     override fun onFinishInflate() {
@@ -227,29 +194,29 @@ class BannerView @JvmOverloads constructor(
         val a = context.obtainStyledAttributes(attrs, R.styleable.BannerView)
         try {
             a?.run {
-                mViewHeight = a.getDimension(R.styleable.BannerView_bv_viewHeight, context.dpf2pxf(default_viewHeight))
+                mViewHeight = a.getDimension(R.styleable.BannerView_bv_viewHeight, context.dpf2pxf(DEFAULT_VIEW_HEIGHT))
                 //默认为MATCH_PARENT
                 if (mViewHeight <= 0) mViewHeight = (LayoutParams.MATCH_PARENT).toFloat()
                 mViewCornerRadius =
                     a.getDimension(
                         R.styleable.BannerView_bv_viewCornerRadius,
-                        context.dpf2pxf(default_viewCornerRadius)
+                        context.dpf2pxf(DEFAULT_VIEW_CORNER_RADIUS)
                     )
                 mItemViewWidthRatio =
-                    a.getFloat(R.styleable.BannerView_bv_itemViewWidthRatio, default_itemViewWidthRatio)
+                    a.getFloat(R.styleable.BannerView_bv_itemViewWidthRatio, DEFAULT_ITEM_VIEW_WIDTH_RATIO)
                 mItemViewMargin =
                     a.getDimension(
                         R.styleable.BannerView_bv_itemViewMargin,
-                        context.dpf2pxf(default_itemViewMargin)
+                        context.dpf2pxf(DEFAULT_ITEM_VIEW_MARGIN)
                     )
                 mIntervalInMillis =
-                    a.getInteger(R.styleable.BannerView_bv_intervalInMillis, default_intervalInMillis)
+                    a.getInteger(R.styleable.BannerView_bv_intervalInMillis, DEFAULT_INTERVAL_IN_MILLIS)
                 mPageHoldInMillis =
-                    a.getInteger(R.styleable.BannerView_bv_pageHoldInMillis, default_pageHoldInMillis)
+                    a.getInteger(R.styleable.BannerView_bv_pageHoldInMillis, DEFAULT_PAGE_HOLD_IN_MILLIS)
                 mScrollMode =
-                    a.getInteger(R.styleable.BannerView_bv_scrollMode, default_scrollMode)
+                    a.getInteger(R.styleable.BannerView_bv_scrollMode, DEFAULT_SCROLL_MODE)
                 mItemViewAlign =
-                    a.getInteger(R.styleable.BannerView_bv_itemViewAlign, default_itemViewAlign)
+                    a.getInteger(R.styleable.BannerView_bv_itemViewAlign, DEFAULT_ITEM_VIEW_ALIGN)
             }
         } finally {
             a?.recycle()
@@ -270,11 +237,23 @@ class BannerView @JvmOverloads constructor(
     private fun initView() {
         if (mBannerViewImpl != null && mWidth > 0) {
             val bvImpl = mBannerViewImpl!!
-
             removeAllViews()
 
             //当数据量为0、1时，设置单个view
             if (bvImpl.getCount() <= 1) {
+                val view = if (bvImpl.getCount() < 1) {
+                    bvImpl.getDefaultView(context)
+                } else {
+                    bvImpl.getItemView(context).apply {
+                        bvImpl.onBindView(this, 0)
+                        bvImpl.onPageSelected(0)
+                    }
+                } ?: View(context).apply { setBackgroundColor(Color.WHITE) }
+
+                val lp = LayoutParams(getItemViewWidth(), mViewHeight.toInt()).apply {
+                    addRule(getItemViewAlign())
+                }
+                addView(view, lp)
                 return
             }
 
@@ -387,10 +366,10 @@ class BannerView @JvmOverloads constructor(
 
     override fun getItemViewAlign(): Int {
         return when (mItemViewAlign) {
-            202 -> {
+            ALIGN_ALIGN_PARENT_LEFT -> {
                 ALIGN_PARENT_LEFT
             }
-            203 -> {
+            ALIGN_ALIGN_PARENT_RIGHT -> {
                 ALIGN_PARENT_RIGHT
             }
             else -> {
@@ -417,14 +396,14 @@ class BannerView @JvmOverloads constructor(
         private const val ALIGN_ALIGN_PARENT_LEFT = 202
         private const val ALIGN_ALIGN_PARENT_RIGHT = 203
 
-        private const val default_viewHeight = 0f
-        private const val default_viewCornerRadius = 0f
-        private const val default_itemViewWidthRatio = 1f
-        private const val default_itemViewMargin = 0f
-        private const val default_intervalInMillis = 2000
-        private const val default_pageHoldInMillis = 0
-        private const val default_scrollMode = SCROLL_MODE_INTERVAL
-        private const val default_itemViewAlign = ALIGN_CENTER_HORIZONTAL
+        private const val DEFAULT_VIEW_HEIGHT = 0f
+        private const val DEFAULT_VIEW_CORNER_RADIUS = 0f
+        private const val DEFAULT_ITEM_VIEW_WIDTH_RATIO = 1f
+        private const val DEFAULT_ITEM_VIEW_MARGIN = 0f
+        private const val DEFAULT_INTERVAL_IN_MILLIS = 2000
+        private const val DEFAULT_PAGE_HOLD_IN_MILLIS = 0
+        private const val DEFAULT_SCROLL_MODE = SCROLL_MODE_INTERVAL
+        private const val DEFAULT_ITEM_VIEW_ALIGN = ALIGN_CENTER_HORIZONTAL
     }
 
 }

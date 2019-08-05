@@ -3,20 +3,24 @@ package me.erwa.sourceset
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
+import android.graphics.*
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import kotlinx.android.synthetic.main.activity_stage_banner_view.*
 import kotlinx.android.synthetic.main.activity_stage_radar_view.*
 import kotlinx.android.synthetic.main.activity_stage_text_clock.*
 import me.erwa.sourceset.view.banner.IBannerView
+import me.erwa.sourceset.view.dpf2pxf
 import java.io.Serializable
 import java.util.*
 import kotlin.concurrent.timer
+
 
 /**
  * @author: drawf
@@ -145,6 +149,7 @@ class StageActivity : AppCompatActivity() {
             override fun onBindView(itemView: View, position: Int) {
                 if (itemView is ImageView) {
                     itemView.scaleType = ImageView.ScaleType.CENTER_CROP
+
                     Glide.with(itemView.context)
                         .load(imageList[position])
                         .into(itemView)
@@ -184,8 +189,10 @@ class StageActivity : AppCompatActivity() {
             override fun onBindView(itemView: View, position: Int) {
                 if (itemView is ImageView) {
                     itemView.scaleType = ImageView.ScaleType.CENTER_CROP
+
                     Glide.with(itemView.context)
                         .load(imageList[position])
+                        .transform(CenterCropRoundCornerTransform(itemView.context.dpf2pxf(4f).toInt()))
                         .into(itemView)
 
                     itemView.setOnClickListener {
@@ -211,11 +218,54 @@ class StageActivity : AppCompatActivity() {
 
         })
 
-        stage_clearSmooth.setOnClickListener {
+        stage_clear.setOnClickListener {
             imageList.clear()
             stage_bannerViewInterval.doRecreate()
             stage_bannerViewSmooth.doRecreate()
         }
+
+        stage_add.setOnClickListener {
+            imageList.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1565003123891&di=6b99987620571a5600e681f1ed9a7e56&imgtype=0&src=http%3A%2F%2Fimg0.ph.126.net%2FqpYuMBtI9tONDBEBXrp6Cg%3D%3D%2F6631251384142500810.jpg")
+            stage_bannerViewInterval.doRecreate()
+            stage_bannerViewSmooth.doRecreate()
+        }
+    }
+
+    /**
+     * 处理图片圆角
+     */
+    inner class CenterCropRoundCornerTransform(private val radius: Int) : CenterCrop() {
+
+        override fun transform(
+            pool: BitmapPool, toTransform: Bitmap,
+            outWidth: Int, outHeight: Int
+        ): Bitmap? {
+            val transform = super.transform(pool, toTransform, outWidth, outHeight)
+            return roundCrop(pool, transform)
+        }
+
+        private fun roundCrop(pool: BitmapPool, source: Bitmap?): Bitmap? {
+            if (source == null)
+                return null
+            var result: Bitmap? = pool.get(
+                source.width, source.height,
+                Bitmap.Config.ARGB_8888
+            )
+            if (result == null) {
+                result = Bitmap.createBitmap(
+                    source.width, source.height,
+                    Bitmap.Config.ARGB_8888
+                )
+            }
+            val canvas = Canvas(result!!)
+            val paint = Paint()
+            paint.shader = BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
+            paint.isAntiAlias = true
+            val rectF = RectF(0f, 0f, source.width.toFloat(), source.height.toFloat())
+            canvas.drawRoundRect(rectF, radius.toFloat(), radius.toFloat(), paint)
+            return result
+        }
+
     }
 
     override fun onDestroy() {

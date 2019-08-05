@@ -31,7 +31,7 @@ class PagerRecyclerView @JvmOverloads constructor(
 
         if (this.mSmoothMode) {
             if (this.mWidth > 0) {
-                this.mPeriodTime = (mSmoothSpeed / (mWidth / default_periodScrollPixel)).toLong()
+                this.mPeriodTime = (mSmoothSpeed / (mWidth / DEFAULT_PERIOD_SCROLL_PIXEL)).toLong()
             }
         } else {
             this.mPeriodTime = intervalInMillis.toLong()
@@ -108,17 +108,17 @@ class PagerRecyclerView @JvmOverloads constructor(
     /**
      * 定时器间隔
      */
-    private var mPeriodTime = default_periodTime
+    private var mPeriodTime = DEFAULT_PERIOD_TIME
 
     /**
      * 定时器延迟时间
      */
-    private var mDelayedTime = default_delayedTime
+    private var mDelayedTime = DEFAULT_DELAYED_TIME
 
     /**
      * 匀速滚动速度，按时间来计算
      */
-    private var mSmoothSpeed = default_smoothSpeed
+    private var mSmoothSpeed = DEFAULT_SMOOTH_SPEED
 
     /**
      * 是否开启定时器的标志位
@@ -150,7 +150,7 @@ class PagerRecyclerView @JvmOverloads constructor(
         mHeight = (h - paddingTop - paddingBottom).toFloat()
 
         if (mSmoothMode) {
-            mPeriodTime = (mSmoothSpeed / (mWidth / default_periodScrollPixel)).toLong()
+            mPeriodTime = (mSmoothSpeed / (mWidth / DEFAULT_PERIOD_SCROLL_PIXEL)).toLong()
         }
 
         if (mTimer == null) {
@@ -185,7 +185,7 @@ class PagerRecyclerView @JvmOverloads constructor(
                 if (mScrollState == SCROLL_STATE_IDLE) {
                     (context as Activity).runOnUiThread {
                         if (mSmoothMode) {
-                            scrollBy(default_periodScrollPixel, 0)
+                            scrollBy(DEFAULT_PERIOD_SCROLL_PIXEL, 0)
                             triggerOnPageSelected()
                         } else {
                             smoothScrollToPosition(++mOldPosition)
@@ -221,7 +221,7 @@ class PagerRecyclerView @JvmOverloads constructor(
         startTimer()
     }
 
-    override fun onVisibilityChanged(changedView: View?, visibility: Int) {
+    override fun onVisibilityChanged(changedView: View, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
         if (visibility == View.VISIBLE) {
             startTimer()
@@ -256,7 +256,9 @@ class PagerRecyclerView @JvmOverloads constructor(
         }
     }
 
-    //TODO 处理嵌套滑动冲突
+    /**
+     * 在分发事件流中控制timer
+     */
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         when (ev?.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -272,6 +274,9 @@ class PagerRecyclerView @JvmOverloads constructor(
         return super.dispatchTouchEvent(ev)
     }
 
+    /**
+     * 获取LinearLayoutManager
+     */
     private fun getLinearLayoutManager(): LinearLayoutManager {
         if (layoutManager != null && layoutManager is LinearLayoutManager) {
             return layoutManager as LinearLayoutManager
@@ -280,9 +285,9 @@ class PagerRecyclerView @JvmOverloads constructor(
     }
 
     companion object {
-        private const val default_periodTime = 0L
-        private const val default_delayedTime = 0L
-        private const val default_periodScrollPixel = 1
-        private const val default_smoothSpeed = 5000
+        private const val DEFAULT_PERIOD_TIME = 0L
+        private const val DEFAULT_DELAYED_TIME = 0L
+        private const val DEFAULT_PERIOD_SCROLL_PIXEL = 1
+        private const val DEFAULT_SMOOTH_SPEED = 5000
     }
 }

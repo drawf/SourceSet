@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorAccent"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -34,10 +33,10 @@
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:layout_marginRight="20dp"
         app:bv_intervalInMillis="6000"
-        app:bv_itemViewAlign="CENTER_IN_PARENT"
+        app:bv_itemViewAlign="CENTER_HORIZONTAL"
         app:bv_itemViewMargin="8dp"
         app:bv_itemViewWidthRatio="0.9"
         app:bv_pageHoldInMillis="1000"
@@ -57,10 +56,23 @@
             app:cbi_itemWidth="24dp" />
     </me.erwa.sourceset.view.banner.BannerView>
 
-    <Button
-        android:id="@+id/stage_clearSmooth"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="clear smooth" />
+        android:layout_marginTop="50dp">
+
+
+        <Button
+            android:id="@+id/stage_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="clear" />
+
+        <Button
+            android:id="@+id/stage_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="add" />
+    </LinearLayout>
 
 </LinearLayout>

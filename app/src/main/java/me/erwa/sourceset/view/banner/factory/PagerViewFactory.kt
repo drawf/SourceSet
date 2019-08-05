@@ -15,7 +15,7 @@ import me.erwa.sourceset.view.banner.pager.PagerRecyclerView
  * @author: drawf
  * @date: 2019-08-04
  * @see: <a href=""></a>
- * @description:
+ * @description: 生成PagerView实例的工厂
  */
 internal class PagerViewFactory(
     private val bannerView: IBannerViewInstance,
@@ -43,7 +43,6 @@ internal class PagerViewFactory(
      */
     private fun casePagerRecycler(isSmoothMode: Boolean): IPagerViewInstance {
         val recyclerView = PagerRecyclerView(bannerView.getContext())
-
         recyclerView.layoutManager = LinearLayoutManager(bannerView.getContext(), LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             override fun getItemCount(): Int {
@@ -61,6 +60,7 @@ internal class PagerViewFactory(
                     parent,
                     false
                 ) as RelativeLayout
+
                 //处理ItemViewWrapper的宽
                 itemWrapper.layoutParams.width = bannerView.getItemViewWidth() + bannerView.getItemViewMargin()
 
@@ -78,6 +78,8 @@ internal class PagerViewFactory(
                 return object : RecyclerView.ViewHolder(itemWrapper) {}
             }
         }
+
+        //初始化位置
         recyclerView.scrollToPosition(bannerView.getCount() * 100)
         recyclerView.setSmoothMode(isSmoothMode)
 

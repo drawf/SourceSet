@@ -175,27 +175,27 @@ class CrossBarIndicator @JvmOverloads constructor(
                 mItemWidth =
                     a.getDimension(
                         R.styleable.CrossBarIndicator_cbi_itemWidth,
-                        context.dpf2pxf(default_itemWidth)
+                        context.dpf2pxf(DEFAULT_ITEM_WIDTH)
                     )
                 mItemHeight =
                     a.getDimension(
                         R.styleable.CrossBarIndicator_cbi_itemHeight,
-                        context.dpf2pxf(default_itemHeight)
+                        context.dpf2pxf(DEFAULT_ITEM_HEIGHT)
                     )
                 mItemSpace =
                     a.getDimension(
                         R.styleable.CrossBarIndicator_cbi_itemSpace,
-                        context.dpf2pxf(default_itemSpace)
+                        context.dpf2pxf(DEFAULT_ITEM_SPACE)
                     )
                 mItemBackgroundColor =
                     a.getColor(
                         R.styleable.CrossBarIndicator_cbi_itemBackgroundColor,
-                        default_itemBackgroundColor
+                        DEFAULT_ITEM_BACKGROUND_COLOR
                     )
                 mItemForegroundColor =
                     a.getColor(
                         R.styleable.CrossBarIndicator_cbi_itemForegroundColor,
-                        default_itemForegroundColor
+                        DEFAULT_ITEM_FOREGROUND_COLOR
                     )
             }
         } finally {
@@ -247,11 +247,11 @@ class CrossBarIndicator @JvmOverloads constructor(
     }
 
     companion object {
-        private const val default_itemWidth = 24f
-        private const val default_itemHeight = 2f
-        private const val default_itemSpace = 4f
-        private const val default_itemBackgroundColor = Color.GREEN
-        private const val default_itemForegroundColor = Color.RED
+        private const val DEFAULT_ITEM_WIDTH = 24f
+        private const val DEFAULT_ITEM_HEIGHT = 2f
+        private const val DEFAULT_ITEM_SPACE = 4f
+        private const val DEFAULT_ITEM_BACKGROUND_COLOR = Color.GREEN
+        private const val DEFAULT_ITEM_FOREGROUND_COLOR = Color.RED
     }
 
 }
