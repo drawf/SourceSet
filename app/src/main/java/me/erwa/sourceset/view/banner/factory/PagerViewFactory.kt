@@ -1,5 +1,8 @@
 package me.erwa.sourceset.view.banner.factory
 
+import android.app.Activity
+import android.content.Context
+import android.os.Build
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -50,8 +53,10 @@ internal class PagerViewFactory(
             }
 
             override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-                val realPos = position % bannerView.getCount()
-                bannerView.onBindView(holder.itemView.findViewById(R.id.id_real_item_view), realPos)
+                if (!isActivityDestroyed(holder.itemView.context)) {
+                    val realPos = position % bannerView.getCount()
+                    bannerView.onBindView(holder.itemView.findViewById(R.id.id_real_item_view), realPos)
+                }
             }
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -84,6 +89,17 @@ internal class PagerViewFactory(
         recyclerView.setSmoothMode(isSmoothMode)
 
         return recyclerView
+    }
+
+    private fun isActivityDestroyed(context: Context?): Boolean {
+        if (context == null) return true
+        if (context !is Activity) {
+            throw IllegalStateException("context 应该为 Activity实例")
+        }
+        if (context.isFinishing || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && context.isDestroyed)) {
+            return true
+        }
+        return false
     }
 
 }
