@@ -297,6 +297,11 @@ class StageActivity : AppCompatActivity() {
 
     }
 
+    override fun onPause() {
+        super.onPause()
+        mTimer?.cancel()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         mTimer?.cancel()
