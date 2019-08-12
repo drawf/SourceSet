@@ -1,6 +1,8 @@
 package me.erwa.sourceset
 
 import android.app.Activity
+import android.app.WallpaperManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.*
@@ -15,6 +17,8 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import kotlinx.android.synthetic.main.activity_stage_banner_view.*
 import kotlinx.android.synthetic.main.activity_stage_radar_view.*
 import kotlinx.android.synthetic.main.activity_stage_text_clock.*
+import me.erwa.sourceset.MyApplication.Companion.context
+import me.erwa.sourceset.view.TextClockWallpaperService
 import me.erwa.sourceset.view.banner.IBannerView
 import me.erwa.sourceset.view.dpf2pxf
 import java.io.Serializable
@@ -65,6 +69,31 @@ class StageActivity : AppCompatActivity() {
             runOnUiThread {
                 stage_textClock.doInvalidate()
             }
+        }
+
+        /**
+         * 设置壁纸，API至少是16
+         */
+        btnSet.setOnClickListener {
+            val intent = Intent().apply {
+                action = WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER
+                putExtra(
+                    WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
+                    ComponentName(
+                        context.applicationContext.packageName,
+                        TextClockWallpaperService::class.java.canonicalName!!
+                    )
+                )
+            }
+            startActivity(intent)
+        }
+
+
+        /**
+         * 还原壁纸
+         */
+        btnClear.setOnClickListener {
+            WallpaperManager.getInstance(this).clear()
         }
 
     }

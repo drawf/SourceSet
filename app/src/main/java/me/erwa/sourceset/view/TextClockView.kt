@@ -59,9 +59,21 @@ class TextClockView @JvmOverloads constructor(
     }
 
     /**
+     * 初始化宽高，共动态壁纸使用
+     */
+    fun initWidthHeight(width: Float, height: Float) {
+        this.mWidth = width
+        this.mHeight = height
+
+        mHourR = mWidth * 0.143f
+        mMinuteR = mWidth * 0.35f
+        mSecondR = mWidth * 0.35f
+    }
+
+    /**
      * 开始绘制
      */
-    fun doInvalidate() {
+    fun doInvalidate(block: (() -> Unit)? = null) {
         Calendar.getInstance().run {
             val hour = get(Calendar.HOUR)
             val minute = get(Calendar.MINUTE)
@@ -91,7 +103,11 @@ class TextClockView @JvmOverloads constructor(
 
                 mSecondDeg = sd + av//线性的旋转6°
 
-                invalidate()
+                if (block != null) {
+                    block.invoke()
+                } else {
+                    invalidate()
+                }
             }
             mAnimator.start()
         }

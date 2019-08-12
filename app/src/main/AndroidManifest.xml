@@ -2,6 +2,7 @@
     package="me.erwa.sourceset">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -27,6 +28,18 @@
         <activity
             android:name=".StageActivity"
             android:screenOrientation="portrait" />
+
+        <!--动态壁纸服务-->
+        <service
+            android:name=".view.TextClockWallpaperService"
+            android:permission="android.permission.BIND_WALLPAPER">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/text_clock_wallpaper" />
+        </service>
 
     </application>
 </manifest>
