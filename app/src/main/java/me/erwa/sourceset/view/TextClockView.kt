@@ -26,7 +26,7 @@ class TextClockView @JvmOverloads constructor(
      */
     private val mPaint = createPaint()
     private val mHelperPaint = createPaint(color = Color.RED)
-    private var mWidth: Float by Delegates.notNull()
+    private var mWidth: Float = -1f
     private var mHeight: Float by Delegates.notNull()
 
     private var mHourR: Float by Delegates.notNull()
@@ -66,12 +66,21 @@ class TextClockView @JvmOverloads constructor(
      * 初始化宽高，供动态壁纸使用
      */
     fun initWidthHeight(width: Float, height: Float) {
-        this.mWidth = width
-        this.mHeight = height
+        if (this.mWidth < 0) {
+            this.mWidth = width
+            this.mHeight = height
 
-        mHourR = mWidth * 0.143f
-        mMinuteR = mWidth * 0.35f
-        mSecondR = mWidth * 0.35f
+            mHourR = mWidth * 0.143f
+            mMinuteR = mWidth * 0.35f
+            mSecondR = mWidth * 0.35f
+        }
+    }
+
+    /**
+     * 停止后续绘制，供动态壁纸使用
+     */
+    fun stopInvalidate() {
+        mAnimator.removeAllUpdateListeners()
     }
 
     /**
@@ -147,11 +156,12 @@ class TextClockView @JvmOverloads constructor(
             //绘制数字时间
             val hour = get(Calendar.HOUR_OF_DAY)
             val minute = get(Calendar.MINUTE)
+            val minuteStr = if (minute < 10) "0$minute" else "$minute"
 
             mPaint.textSize = mHourR * 0.4f
             mPaint.alpha = 255
             mPaint.textAlign = Paint.Align.CENTER
-            canvas.drawText("$hour:$minute", 0f, mPaint.getBottomedY(), mPaint)
+            canvas.drawText("$hour:$minuteStr", 0f, mPaint.getBottomedY(), mPaint)
 
             //绘制月份、星期
             val month = (this.get(Calendar.MONTH) + 1).let {

@@ -27,7 +27,6 @@ class TextClockWallpaperService : WallpaperService() {
         override fun onCreate(surfaceHolder: SurfaceHolder?) {
             super.onCreate(surfaceHolder)
             Log.d("clock", "onCreate")
-            startClock()
         }
 
         override fun onSurfaceCreated(holder: SurfaceHolder?) {
@@ -40,6 +39,14 @@ class TextClockWallpaperService : WallpaperService() {
             Log.d("clock", "onSurfaceChanged")
         }
 
+        /**
+         * Called to inform you of the wallpaper becoming visible or
+         * hidden.  <em>It is very important that a wallpaper only use
+         * CPU while it is visible.</em>.
+         *
+         * 当壁纸显示或隐藏是会回调该方法。
+         * 很重要的一点是，要只在壁纸显示的时候做绘制操作（占用CPU）。
+         */
         override fun onVisibilityChanged(visible: Boolean) {
             super.onVisibilityChanged(visible)
             Log.d("clock", "onVisibilityChanged >>> $visible")
@@ -53,16 +60,21 @@ class TextClockWallpaperService : WallpaperService() {
         override fun onSurfaceDestroyed(holder: SurfaceHolder?) {
             super.onSurfaceDestroyed(holder)
             Log.d("clock", "onSurfaceDestroyed")
+            stopClock()
         }
 
         override fun onDestroy() {
             super.onDestroy()
             Log.d("clock", "onDestroy")
-            stopClock()
         }
 
+        /**
+         * 开始绘制
+         */
         private fun startClock() {
-            mTimer = timer(initialDelay = 0, period = 1000) {
+            if (mTimer != null) return
+
+            mTimer = timer(period = 1000) {
                 mHandler.post {
                     mClockView.doInvalidate {
                         if (mTimer != null && surfaceHolder != null) {
@@ -77,10 +89,13 @@ class TextClockWallpaperService : WallpaperService() {
             }
         }
 
+        /**
+         * 停止绘制
+         */
         private fun stopClock() {
             mTimer?.cancel()
             mTimer = null
-//            mHandler.removeCallbacksAndMessages(null)
+            mClockView.stopInvalidate()
         }
     }
 
