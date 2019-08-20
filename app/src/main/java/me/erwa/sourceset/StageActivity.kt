@@ -80,8 +80,8 @@ class StageActivity : AppCompatActivity() {
                 putExtra(
                     WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
                     ComponentName(
-                        context.applicationContext.packageName,
-                        TextClockWallpaperService::class.java.canonicalName!!
+                        context,
+                        TextClockWallpaperService::class.java
                     )
                 )
             }
