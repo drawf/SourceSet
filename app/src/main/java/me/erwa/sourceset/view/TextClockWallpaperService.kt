@@ -78,11 +78,12 @@ class TextClockWallpaperService : WallpaperService() {
                 mHandler.post {
                     mClockView.doInvalidate {
                         if (mTimer != null && surfaceHolder != null) {
-                            val canvas = surfaceHolder.lockCanvas()!!
-                            mClockView.initWidthHeight(canvas.width.toFloat(), canvas.height.toFloat())
-                            mClockView.draw(canvas)
-                            surfaceHolder.unlockCanvasAndPost(canvas)
+                            surfaceHolder.lockCanvas()?.let { canvas ->
+                                mClockView.initWidthHeight(canvas.width.toFloat(), canvas.height.toFloat())
+                                mClockView.draw(canvas)
+                                surfaceHolder.unlockCanvasAndPost(canvas)
 //                            Log.d("clock", "doInvalidate >>> 触发绘制")
+                            }
                         }
                     }
                 }
