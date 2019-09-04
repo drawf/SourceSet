@@ -34,4 +34,11 @@
         android:layout_height="wrap_content"
         android:text="Banner图" />
 
+    <Button
+        android:id="@+id/main_action_threadLocal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ThreadLocal模拟"
+        android:textAllCaps="false" />
+
 </LinearLayout>

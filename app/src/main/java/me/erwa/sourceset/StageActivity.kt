@@ -17,7 +17,10 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import kotlinx.android.synthetic.main.activity_stage_banner_view.*
 import kotlinx.android.synthetic.main.activity_stage_radar_view.*
 import kotlinx.android.synthetic.main.activity_stage_text_clock.*
+import kotlinx.android.synthetic.main.activity_stage_thread_local.*
 import me.erwa.sourceset.MyApplication.Companion.context
+import me.erwa.sourceset.framework.threadlocal.MockThread
+import me.erwa.sourceset.framework.threadlocal.MockThreadLocal
 import me.erwa.sourceset.view.TextClockWallpaperService
 import me.erwa.sourceset.view.banner.IBannerView
 import me.erwa.sourceset.view.dpf2pxf
@@ -44,7 +47,8 @@ class StageActivity : AppCompatActivity() {
             TYPE_TEXT_CLOCK to { caseTextClock() },
             TYPE_SHADOW_LAYOUT to { caseShadowLayout() },
             TYPE_RADAR_VIEW to { caseRadarView() },
-            TYPE_BANNER_VIEW to { caseBannerView() }
+            TYPE_BANNER_VIEW to { caseBannerView() },
+            TYPE_THREAD_LOCAL to { caseThreadLocal() }
         )
 
         //处理参数数据
@@ -55,6 +59,72 @@ class StageActivity : AppCompatActivity() {
         }
 
         mTypeMap[mArgParams.showType]?.invoke()
+    }
+
+    //********************************
+    //* ThreadLocal
+    //********************************
+    private fun caseThreadLocal() {
+        setContentView(R.layout.activity_stage_thread_local)
+
+        //定义两个MockThreadLocal
+        val mtl1 = MockThreadLocal<String>()
+        val mtl2 = object : MockThreadLocal<Boolean>() {
+            override fun initialValue(): Boolean? {
+                return false
+            }
+        }
+
+        //测试按钮点击时执行
+        btnRun.setOnClickListener {
+            val thread1 = MockThread(Runnable {
+                val name1 = Thread.currentThread().name
+
+                //mtl1未设置值
+                log2Logcat("$name1 mtl1未设置值时：mtl1.get()=${mtl1.get()}")
+
+                //mtl1设置值：二娃_
+                mtl1.set("二娃_")
+                log2Logcat("$name1 mtl1设置值后：mtl1.get()=${mtl1.get()}")
+
+                Thread.sleep(200)
+
+                //mtl1调用remove
+                mtl1.remove()
+                log2Logcat("$name1 mtl1调用remove后：mtl1.get()=${mtl1.get()}")
+
+                log2Logcat("$name1 线程运行结束---------------------")
+            }, "线程1")
+
+            val thread2 = MockThread(Runnable {
+                val name2 = Thread.currentThread().name
+
+                //mtl2未设置值
+                log2Logcat("$name2 mtl2未设置值时：mtl2.get()=${mtl2.get()}")
+
+                //mtl2设置值：true
+                mtl2.set(true)
+                log2Logcat("$name2 mtl2设置值后：mtl2.get()=${mtl2.get()}")
+
+                log2Logcat("$name2 获取mtl1的值：mtl1.get()=${mtl1.get()}")
+
+                log2Logcat("$name2 线程运行结束---------------------")
+            }, "线程2")
+
+            thread1.start()
+            thread2.start()
+        }
+
+        btnClear_threadLocal.setOnClickListener {
+            llLogcat.text = ""
+        }
+
+    }
+
+    private fun log2Logcat(log: String) {
+        runOnUiThread {
+            llLogcat.append("\n >>> $log")
+        }
     }
 
     //********************************
@@ -319,6 +389,7 @@ class StageActivity : AppCompatActivity() {
         const val TYPE_SHADOW_LAYOUT = "TYPE_SHADOW_LAYOUT"
         const val TYPE_RADAR_VIEW = "TYPE_RADAR_VIEW"
         const val TYPE_BANNER_VIEW = "TYPE_BANNER_VIEW"
+        const val TYPE_THREAD_LOCAL = "TYPE_THREAD_LOCAL"
 
         @JvmStatic
         fun navigate(context: Context, params: ActivityParams) {

@@ -43,6 +43,13 @@ class MainActivity : AppCompatActivity() {
                 StageActivity.ActivityParams(StageActivity.TYPE_BANNER_VIEW)
             )
         }
+
+        main_action_threadLocal.setOnClickListener {
+            StageActivity.navigate(
+                this,
+                StageActivity.ActivityParams(StageActivity.TYPE_THREAD_LOCAL)
+            )
+        }
     }
 
 }
